@@ -18,11 +18,8 @@ from dashboard.components.alert_banner import render_alert_banner
 
 st.set_page_config(page_title="Executive Dashboard | Epi Predict", layout="wide")
 
-# Load CSS
-css_path = Path(__file__).resolve().parent.parent / "styles" / "custom.css"
-if css_path.exists():
-    with open(css_path, "r") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+from dashboard.components.ui_helper import inject_custom_css
+inject_custom_css()
 
 st.title("Executive Dashboard")
 st.image("dashboard/assets/global_map.png", use_container_width=True)

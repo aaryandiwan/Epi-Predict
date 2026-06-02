@@ -4,7 +4,6 @@
 
 /* Base Styles */
 .stApp {
-    background-color: #0a1628;
     color: #e2e8f0;
     font-family: 'Inter', sans-serif;
 }
@@ -17,10 +16,10 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Glassmorphism Cards */
 .epi-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -30,8 +29,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .epi-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 229, 168, 0.4);
 }
 
 /* Risk Badges */
@@ -84,7 +83,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Buttons */
 .stButton > button {
-    background: linear-gradient(135deg, #00d4aa 0%, #00b390 100%);
+    background: #00E5A8;
     color: #0a1628;
     font-weight: 600;
     border: none;
@@ -94,9 +93,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #00b390 0%, #009275 100%);
+    background: #00C490;
     transform: translateY(-1px);
-    color: white;
+    color: #0a1628;
+    box-shadow: 0 4px 12px rgba(0, 229, 168, 0.4);
 }
 
 /* Dataframe/Table overrides */
@@ -123,27 +123,26 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Landing Page Hero */
 .hero-section {
-    background: linear-gradient(135deg, rgba(0,212,170,0.1) 0%, rgba(10,22,40,1) 100%);
-    border: 1px solid rgba(0, 212, 170, 0.2);
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 229, 168, 0.2);
     border-radius: 16px;
     padding: 3rem 2rem;
     text-align: center;
     margin-bottom: 2rem;
-    box-shadow: 0 0 40px rgba(0, 212, 170, 0.05);
+    box-shadow: 0 0 40px rgba(0, 229, 168, 0.05);
 }
 
 .hero-title {
     font-size: 3.5rem !important;
-    background: linear-gradient(to right, #00d4aa, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FFFFFF;
     font-weight: 800;
     margin-bottom: 1rem;
 }
 
 .hero-subtitle {
     font-size: 1.2rem;
-    color: #94a3b8;
+    color: #D1D5DB;
     max-width: 800px;
     margin: 0 auto;
     line-height: 1.6;
@@ -158,8 +157,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .feature-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 1.5rem;
     text-align: left;
@@ -169,15 +169,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .feature-card:hover {
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.04);
-    border-top: 3px solid #00d4aa;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    background: rgba(15, 23, 42, 0.8);
+    border-top: 3px solid #00E5A8;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
 .feature-icon {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    background: rgba(0, 212, 170, 0.1);
+    background: rgba(0, 229, 168, 0.15);
+    color: #00E5A8;
     width: 60px;
     height: 60px;
     display: flex;

@@ -13,11 +13,8 @@ from dashboard.components.prevention_card import render_prevention_card
 
 st.set_page_config(page_title="Risk Analysis | Epi Predict", layout="wide")
 
-# Load CSS
-css_path = Path(__file__).resolve().parent.parent / "styles" / "custom.css"
-if css_path.exists():
-    with open(css_path, "r") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+from dashboard.components.ui_helper import inject_custom_css
+inject_custom_css()
 
 st.title("Outbreak Risk & Recommendations")
 
