@@ -57,7 +57,11 @@ class PredictionEngine:
                 f"Available: {[k for k in self.registry if not k.startswith('_')]}"
             )
 
-        model_path = self.registry[name]["path"]
+        # Construct path dynamically using MODELS_DIR to prevent absolute path issues on cloud
+        saved_path_str = self.registry[name]["path"]
+        # Handle both Windows and Unix paths that might be saved in the registry
+        filename = Path(saved_path_str.replace("\\", "/")).name
+        model_path = MODELS_DIR / filename
 
         if name == "lstm":
             try:
