@@ -11,6 +11,10 @@ A production-grade, end-to-end AI healthcare application designed to forecast se
 * **Outbreak Alert System:** Dynamic risk classification and early warning generation.
 * **MLOps Pipeline:** Automated retraining, model registry, and performance monitoring.
 
+## 🌐 Live Demo
+The application can be deployed for free using Streamlit Community Cloud.
+Once deployed, the live link will be available here: **[Link to Live App]**
+
 ## 🚀 Quick Start
 
 ### 1. Installation
