@@ -10,15 +10,13 @@ from modules.risk_classifier import classify_risk
 router = APIRouter(prefix="/api", tags=["Predictions"])
 
 
-def get_engine():
-    engine = PredictionEngine()
-    if not engine.registry:
-        raise HTTPException(status_code=503, detail="Models not trained yet. Please train models first.")
-    return engine
+def get_dynamic_engine(country: str):
+    df = load_and_prepare(country=country)
+    return PredictionEngine(dynamic_df=df)
 
 
 @router.post("/predict", response_model=PredictionResponse)
-async def predict_single_week(request: PredictionRequest, engine: PredictionEngine = Depends(get_engine)):
+async def predict_single_week(request: PredictionRequest):
     """Generate a single week prediction for the given country."""
     try:
         # Load recent data to use for lag features
@@ -26,6 +24,7 @@ async def predict_single_week(request: PredictionRequest, engine: PredictionEngi
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data found for country: {request.country}")
             
+        engine = get_dynamic_engine(request.country)
         # For a single week, we forecast 1 week ahead
         forecast_result = engine.forecast_future(
             df=df,
@@ -37,7 +36,8 @@ async def predict_single_week(request: PredictionRequest, engine: PredictionEngi
         lower = forecast_result["forecast"]["lower_bound"][0]
         upper = forecast_result["forecast"]["upper_bound"][0]
         
-        risk = classify_risk(pred_val)
+        historical_cases = df["Target"].tolist() if "Target" in df.columns else []
+        risk = classify_risk(pred_val, historical_cases)
         
         return PredictionResponse(
             predicted_cases=pred_val,
@@ -52,7 +52,7 @@ async def predict_single_week(request: PredictionRequest, engine: PredictionEngi
 
 
 @router.get("/forecast/{weeks}", response_model=ForecastResponse)
-async def get_forecast(weeks: int, country: str = "India", model_name: str = None, engine: PredictionEngine = Depends(get_engine)):
+async def get_forecast(weeks: int, country: str = "India", model_name: str = None):
     """Generate a multi-week forecast."""
     if weeks < 1 or weeks > 52:
         raise HTTPException(status_code=400, detail="Weeks must be between 1 and 52")
@@ -62,6 +62,7 @@ async def get_forecast(weeks: int, country: str = "India", model_name: str = Non
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data found for country: {country}")
             
+        engine = get_dynamic_engine(country)
         result = engine.forecast_future(
             df=df,
             weeks_ahead=weeks,
@@ -73,13 +74,14 @@ async def get_forecast(weeks: int, country: str = "India", model_name: str = Non
 
 
 @router.get("/forecast-data")
-async def get_forecast_data(country: str = "India", engine: PredictionEngine = Depends(get_engine)):
+async def get_forecast_data(country: str = "India"):
     """Get raw forecast data."""
     try:
         df = load_and_prepare(country=country)
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data found for country: {country}")
             
+        engine = get_dynamic_engine(country)
         result = engine.forecast_future(df=df, weeks_ahead=12)
         return result
     except Exception as e:

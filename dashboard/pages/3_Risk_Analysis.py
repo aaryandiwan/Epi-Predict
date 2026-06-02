@@ -19,11 +19,6 @@ inject_custom_css()
 st.title("Outbreak Risk & Recommendations")
 
 try:
-    engine = PredictionEngine()
-    if not engine.registry:
-        st.error("No models found. Please train models first.")
-        st.stop()
-        
     df_full = load_and_prepare(country="ALL")
     countries = get_available_countries(df_full)
     if not countries: countries = ["India"]
@@ -33,9 +28,15 @@ except Exception as e:
 
 selected_country = st.selectbox("Select Region for Risk Analysis", countries, index=countries.index("India") if "India" in countries else 0)
 
+@st.cache_resource(ttl=3600)
+def get_dynamic_engine(country):
+    df = load_and_prepare(country=country)
+    return PredictionEngine(dynamic_df=df)
+
 @st.cache_data(ttl=300)
 def get_risk_data(country):
     df = load_and_prepare(country=country)
+    engine = get_dynamic_engine(country)
     forecast = engine.forecast_future(df, weeks_ahead=12)
     return df, forecast
 
@@ -44,7 +45,8 @@ with st.spinner("Analyzing risk..."):
 
 preds = forecast_data["forecast"]["predicted_cases"]
 current_pred = preds[0]
-risk_info = classify_risk(current_pred)
+historical_cases = historical_df["Target"].tolist() if "Target" in historical_df.columns else []
+risk_info = classify_risk(current_pred, historical_cases)
 recs = get_recommendations(risk_info["level"])
 
 col1, col2 = st.columns([1, 2])
@@ -67,6 +69,12 @@ with col1:
     """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Explainability for dynamic thresholds
+    t = risk_info.get("thresholds", {})
+    if t:
+        st.info(f"**Why {risk_info['label'].upper()}?** For {selected_country}, the historically calculated threshold for {risk_info['label']} is between **{t[risk_info['level']]['min']:,.0f}** and **{t[risk_info['level']]['max']:,.0f}** cases. With **{current_pred:,.0f}** predicted cases, it falls into this category.")
+        
     st.info(f"**AI Summary:** {recs['summary']}")
 
 with col2:
@@ -77,7 +85,7 @@ st.markdown("---")
 st.subheader("Risk Trajectory (Next 12 Weeks)")
 
 # Timeline of risk
-risk_timeline = classify_batch(preds)
+risk_timeline = classify_batch(preds, historical_cases)
 
 cols = st.columns(12)
 for i, (col, r, p) in enumerate(zip(cols, risk_timeline, preds)):

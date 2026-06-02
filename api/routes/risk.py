@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any
 
 from api.schemas.responses import RiskLevelResponse, RecommendationResponse
-from api.routes.predictions import get_engine
+from api.routes.predictions import get_dynamic_engine
 from models.predictor import PredictionEngine
 from data.data_loader import load_and_prepare
 from modules.risk_classifier import classify_risk
@@ -13,34 +13,38 @@ router = APIRouter(prefix="/api", tags=["Risk & Alerts"])
 
 
 @router.get("/risk-level", response_model=RiskLevelResponse)
-async def get_current_risk(country: str = "India", engine: PredictionEngine = Depends(get_engine)):
+async def get_current_risk(country: str = "India"):
     """Get current risk classification based on next week's forecast."""
     try:
         df = load_and_prepare(country=country)
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data found for country: {country}")
             
+        engine = get_dynamic_engine(country)
         forecast_result = engine.forecast_future(df=df, weeks_ahead=1)
         pred_val = forecast_result["forecast"]["predicted_cases"][0]
         
-        risk = classify_risk(pred_val)
+        historical_cases = df["Target"].tolist() if "Target" in df.columns else []
+        risk = classify_risk(pred_val, historical_cases)
         return RiskLevelResponse(**risk)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/recommendations", response_model=RecommendationResponse)
-async def get_current_recommendations(country: str = "India", engine: PredictionEngine = Depends(get_engine)):
+async def get_current_recommendations(country: str = "India"):
     """Get recommendations based on current risk level."""
     try:
         df = load_and_prepare(country=country)
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data found for country: {country}")
             
+        engine = get_dynamic_engine(country)
         forecast_result = engine.forecast_future(df=df, weeks_ahead=1)
         pred_val = forecast_result["forecast"]["predicted_cases"][0]
         
-        risk = classify_risk(pred_val)
+        historical_cases = df["Target"].tolist() if "Target" in df.columns else []
+        risk = classify_risk(pred_val, historical_cases)
         recs = get_recommendations(risk["level"])
         return RecommendationResponse(**recs)
     except Exception as e:

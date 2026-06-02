@@ -39,11 +39,11 @@ DEFAULT_WHO_REGION = os.getenv("DEFAULT_WHO_REGION", "SEAR")  # South-East Asia
 
 # ─── Model Configuration ────────────────────────────────────────────────────
 TARGET_COLUMN = "Target"  # INF_A + INF_B
-FEATURE_COLUMNS = ["ISO_YEAR", "ISO_WEEK", "Month", "lag_1", "lag_2", "roll_3", "country_code"]
+FEATURE_COLUMNS = ["ISO_YEAR", "ISO_WEEK", "Month", "lag_1", "lag_2", "roll_3"]
 ALL_FEATURES = [
     "ISO_YEAR", "ISO_WEEK", "Month",
     "lag_1", "lag_2", "lag_3",
-    "roll_3", "roll_5", "positivity_rate", "country_code"
+    "roll_3", "roll_5", "positivity_rate"
 ]
 TRAIN_TEST_SPLIT = 0.8
 RANDOM_STATE = 42
@@ -99,11 +99,13 @@ MODEL_PARAMS = {
 
 
 # ─── Risk Classification Thresholds ─────────────────────────────────────────
-RISK_THRESHOLDS = {
-    "low": {"min": 0, "max": 500, "label": "Low Risk", "color": "#22c55e", "icon": "✅"},
-    "moderate": {"min": 500, "max": 2000, "label": "Moderate Risk", "color": "#f59e0b", "icon": "⚠️"},
-    "high": {"min": 2000, "max": 5000, "label": "High Risk", "color": "#ef4444", "icon": "🔴"},
-    "severe": {"min": 5000, "max": float("inf"), "label": "Severe Outbreak", "color": "#7c2d12", "icon": "🚨"},
+# Note: These are now computed dynamically per country based on historical percentiles.
+# See modules/risk_classifier.py for calculation logic.
+DYNAMIC_RISK_PERCENTILES = {
+    "low": 0.50,      # Below 50th percentile
+    "moderate": 0.75, # 50th to 75th percentile
+    "high": 0.90,     # 75th to 90th percentile
+    # severe is > 90th percentile
 }
 
 

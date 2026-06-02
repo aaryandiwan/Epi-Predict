@@ -154,40 +154,7 @@ def create_positivity_rate(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def encode_country(df: pd.DataFrame, is_training: bool = True) -> pd.DataFrame:
-    """Encode COUNTRY_AREA_TERRITORY into country_code using LabelEncoder."""
-    df = df.copy()
-    col = "COUNTRY_AREA_TERRITORY"
-    encoder_path = MODELS_DIR / "country_encoder.joblib"
-    
-    if col not in df.columns:
-        df["country_code"] = 0
-        return df
-
-    if is_training:
-        encoder = LabelEncoder()
-        # Add an 'Unknown' class dynamically to handle unseen countries later if needed
-        # But simple LabelEncoder is fine for now
-        df["country_code"] = encoder.fit_transform(df[col].astype(str))
-        joblib.dump(encoder, encoder_path)
-        logger.info(f"Fitted and saved Country Encoder with {len(encoder.classes_)} countries")
-    else:
-        if encoder_path.exists():
-            encoder = joblib.load(encoder_path)
-            # Handle unseen labels gracefully by assigning to 0 (first country) or -1
-            classes = list(encoder.classes_)
-            encoded = []
-            for val in df[col].astype(str):
-                if val in classes:
-                    encoded.append(encoder.transform([val])[0])
-                else:
-                    encoded.append(0) # Default to 0 if unseen
-            df["country_code"] = encoded
-        else:
-            df["country_code"] = 0
-            
-    return df
-
+# encode_country removed for dynamic country-specific training.
 
 def run_feature_pipeline(
     df: pd.DataFrame,
@@ -228,7 +195,6 @@ def run_feature_pipeline(
         df = df.sort_values(sort_cols).reset_index(drop=True)
 
     df = create_target(df)
-    df = encode_country(df, is_training=is_training)
     df = create_temporal_features(df)
     df = create_lag_features(df, group_col=group_col)
     df = create_rolling_features(df, group_col=group_col)
@@ -374,10 +340,6 @@ def generate_future_features(
         prev_targets.append(lag_1)  # Approximate; updated during prediction
 
     future_df = pd.DataFrame(future_rows)
-    
-    # Encode country for future features
-    future_df = encode_country(future_df, is_training=False)
-    
     logger.info(f"Generated {weeks_ahead} weeks of future features")
 
     return future_df

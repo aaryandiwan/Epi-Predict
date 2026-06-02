@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any
 
 from api.schemas.responses import ReportResponse
-from api.routes.predictions import get_engine
+from api.routes.predictions import get_dynamic_engine
 from models.predictor import PredictionEngine
 from data.data_loader import load_and_prepare
 from modules.report_generator import generate_weekly_report
@@ -19,17 +19,19 @@ router = APIRouter(prefix="/api", tags=["Reports & Info"])
 
 
 @router.get("/weekly-report", response_model=ReportResponse)
-async def get_weekly_report(country: str = "India", engine: PredictionEngine = Depends(get_engine)):
+async def get_weekly_report(country: str = "India"):
     """Generate comprehensive weekly health report."""
     try:
         df = load_and_prepare(country=country)
         if df.empty:
             raise HTTPException(status_code=404, detail=f"No data found for country: {country}")
             
+        engine = get_dynamic_engine(country)
         forecast_result = engine.forecast_future(df=df, weeks_ahead=4)
         predictions = forecast_result["forecast"]["predicted_cases"]
         
-        risk = classify_risk(predictions[0])
+        historical_cases = df["Target"].tolist() if "Target" in df.columns else []
+        risk = classify_risk(predictions[0], historical_cases)
         recs = get_recommendations(risk["level"])
         
         report_data = generate_weekly_report(predictions, risk["level"], recs)

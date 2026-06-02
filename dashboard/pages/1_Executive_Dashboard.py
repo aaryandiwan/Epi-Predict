@@ -22,14 +22,19 @@ from dashboard.components.ui_helper import inject_custom_css
 inject_custom_css()
 
 st.title("Executive Dashboard")
-st.image("dashboard/assets/global_map.png", use_container_width=True)
 
-# Data Loading with Cache
+@st.cache_resource(ttl=3600)
+def get_dynamic_engine(country):
+    from data.data_loader import load_and_prepare
+    from models.predictor import PredictionEngine
+    df = load_and_prepare(country=country)
+    return PredictionEngine(dynamic_df=df)
+
 @st.cache_data(ttl=300)
 def get_dashboard_data(country):
     try:
         df = load_and_prepare(country=country)
-        engine = PredictionEngine()
+        engine = get_dynamic_engine(country)
         
         if not engine.registry:
             return None, df, "models_missing"
@@ -74,7 +79,8 @@ prev_week_cases = historical_df["Target"].iloc[-2] if len(historical_df) > 1 and
 weekly_change = ((current_week_cases - prev_week_cases) / prev_week_cases * 100) if prev_week_cases > 0 else 0
 
 predicted_next = forecast_data["forecast"]["predicted_cases"][0]
-risk_info = classify_risk(predicted_next)
+historical_cases = historical_df["Target"].tolist() if "Target" in historical_df.columns else []
+risk_info = classify_risk(predicted_next, historical_cases)
 
 # Top Alert Banner
 if risk_info["level"] in ["high", "severe"]:
@@ -92,7 +98,7 @@ with col1:
 
 with col2:
     # Get best model metrics
-    engine = PredictionEngine()
+    engine = get_dynamic_engine(selected_country)
     best_model = engine.best_model_name
     best_r2 = 0.0
     if best_model:

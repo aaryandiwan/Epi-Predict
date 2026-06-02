@@ -19,24 +19,14 @@ inject_custom_css()
 
 st.title("AI Predictions & Forecasting")
 
-# Setup engine
-try:
-    engine = PredictionEngine()
-    if not engine.registry:
-        st.error("No models found. Please train models first.")
-        st.stop()
-except Exception as e:
-    st.error(f"Error loading models: {e}")
-    st.stop()
+# Models are now trained dynamically per country.
 
 # Sidebar Controls
 st.sidebar.header("Forecast Settings")
 horizon = st.sidebar.slider("Forecast Horizon (Weeks)", min_value=4, max_value=52, value=12, step=4)
 
-available_models = [m for m in engine.registry.keys() if not m.startswith("_")]
-# Add "Best Model" as an option at the top
-model_options = ["Auto (Best Model)"] + available_models
-selected_model_display = st.sidebar.selectbox("Select Model", model_options)
+# Model selection will be populated after engine is loaded dynamically.
+selected_model_display = st.sidebar.selectbox("Select Model", ["Auto (Best Model)", "random_forest", "xgboost", "linear_regression"])
 selected_model = None if selected_model_display == "Auto (Best Model)" else selected_model_display
 
 try:
@@ -49,15 +39,22 @@ except Exception as e:
 selected_country = st.sidebar.selectbox("Select Country", countries, index=countries.index("India") if "India" in countries else 0)
 
 
+@st.cache_resource(ttl=3600)
+def get_dynamic_engine(country):
+    df = load_and_prepare(country=country)
+    return PredictionEngine(dynamic_df=df)
+
 @st.cache_data(ttl=300)
 def get_predictions(country, weeks, model):
     df = load_and_prepare(country=country)
+    engine = get_dynamic_engine(country)
     forecast = engine.forecast_future(df, weeks_ahead=weeks, model_name=model)
     return df, forecast
 
 with st.spinner("Generating AI forecast..."):
     historical_df, forecast_data = get_predictions(selected_country, horizon, selected_model)
 
+engine = get_dynamic_engine(selected_country)
 actual_model_used = forecast_data["model_used"]
 
 st.markdown(f"""
@@ -175,7 +172,8 @@ table_df = pd.DataFrame({
 })
 
 from modules.risk_classifier import classify_batch
-risk_levels = classify_batch(fore_data["predicted_cases"])
+historical_cases = historical_df["Target"].tolist() if "Target" in historical_df.columns else []
+risk_levels = classify_batch(fore_data["predicted_cases"], historical_cases)
 table_df["Risk Level"] = [r["label"] for r in risk_levels]
 
 st.dataframe(table_df, use_container_width=True, hide_index=True)

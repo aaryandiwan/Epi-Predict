@@ -27,29 +27,83 @@ class PredictionEngine:
     Inference engine that loads trained models and generates predictions.
     """
 
-    def __init__(self):
+    def __init__(self, dynamic_df=None):
         self.models = {}
         self.registry = {}
         self.best_model_name = None
-        self._load_registry()
+        self.dynamic = dynamic_df is not None
+
+        if self.dynamic:
+            self._train_dynamic(dynamic_df)
+        else:
+            self._load_registry()
+
+    def _train_dynamic(self, df):
+        """Train models dynamically in memory for a specific dataset."""
+        import time
+        from models.feature_engineering import run_feature_pipeline, prepare_ml_data
+        from models.model_definitions import get_model
+
+        start_time = time.time()
+        logger.info("Starting dynamic model training...")
+
+        df_feats = run_feature_pipeline(df, is_training=False)
+        X_train, X_test, y_train, y_test, features = prepare_ml_data(df_feats)
+        
+        models_to_train = ["random_forest", "xgboost", "linear_regression"]
+        
+        self.registry = {"_comparison": []}
+        best_r2 = -float("inf")
+        best_name = None
+        
+        from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+        
+        for name in models_to_train:
+            try:
+                model = get_model(name)
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+                
+                metrics = {
+                    "mae": float(mean_absolute_error(y_test, y_pred)),
+                    "rmse": float(np.sqrt(mean_squared_error(y_test, y_pred))),
+                    "r2_score": float(r2_score(y_test, y_pred))
+                }
+                
+                self.models[name] = model
+                self.registry[name] = {"metrics": metrics, "features": features}
+                self.registry["_comparison"].append({"model": name, **metrics})
+                
+                if metrics["r2_score"] > best_r2:
+                    best_r2 = metrics["r2_score"]
+                    best_name = name
+            except Exception as e:
+                logger.error(f"Failed dynamic train for {name}: {e}")
+
+        if best_name is None:
+            # Fallback if all failed
+            best_name = "random_forest"
+            
+        self.registry["_best_model"] = best_name
+        self.best_model_name = best_name
+        logger.info(f"Dynamic training completed in {time.time()-start_time:.2f}s. Best model: {best_name}")
 
     def _load_registry(self):
-        """Load model registry."""
+        """Load model registry from disk."""
         if MODEL_REGISTRY_FILE.exists():
             with open(MODEL_REGISTRY_FILE, "r") as f:
                 self.registry = json.load(f)
             self.best_model_name = self.registry.get("_best_model")
-            logger.info(
-                f"Registry loaded: {len(self.registry) - 2} models, "
-                f"best={self.best_model_name}"
-            )
         else:
             logger.warning("No model registry found. Train models first.")
 
     def load_model(self, name: str):
-        """Load a specific model from disk."""
+        """Load a specific model from disk or memory."""
         if name in self.models:
             return self.models[name]
+
+        if self.dynamic:
+            raise ValueError(f"Model '{name}' not found in dynamic training registry.")
 
         if name not in self.registry:
             raise ValueError(
@@ -244,10 +298,28 @@ class PredictionEngine:
                     lag1_idx = available_features.index("lag_1")
                     X_future[i + 1, lag1_idx] = pred
                 # Update lag_2
-                if "lag_2" in available_features and i + 2 < weeks_ahead:
+                if "lag_2" in available_features:
                     lag2_idx = available_features.index("lag_2")
-                    if i + 1 < weeks_ahead:
-                        X_future[i + 1, lag2_idx] = X_future[i, lag1_idx] if "lag_1" in available_features else pred
+                    X_future[i + 1, lag2_idx] = X_future[i, lag1_idx] if "lag_1" in available_features else pred
+                # Update lag_3
+                if "lag_3" in available_features:
+                    lag3_idx = available_features.index("lag_3")
+                    X_future[i + 1, lag3_idx] = X_future[i, lag2_idx] if "lag_2" in available_features else pred
+                # Update roll_3
+                if "roll_3" in available_features:
+                    roll3_idx = available_features.index("roll_3")
+                    vals = [pred]
+                    if "lag_1" in available_features: vals.append(X_future[i + 1, available_features.index("lag_1")])
+                    if "lag_2" in available_features: vals.append(X_future[i + 1, available_features.index("lag_2")])
+                    X_future[i + 1, roll3_idx] = sum(vals) / len(vals)
+                # Update roll_5
+                if "roll_5" in available_features:
+                    roll5_idx = available_features.index("roll_5")
+                    vals = [pred]
+                    if "lag_1" in available_features: vals.append(X_future[i + 1, available_features.index("lag_1")])
+                    if "lag_2" in available_features: vals.append(X_future[i + 1, available_features.index("lag_2")])
+                    if "lag_3" in available_features: vals.append(X_future[i + 1, available_features.index("lag_3")])
+                    X_future[i + 1, roll5_idx] = sum(vals) / max(1, len(vals))
 
         # Build forecast DataFrame
         forecast_data = {

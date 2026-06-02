@@ -17,12 +17,29 @@ inject_custom_css()
 
 st.title("Explainable AI (XAI)")
 st.markdown("Understand how the machine learning models make their influenza predictions.")
-st.image("dashboard/assets/influenza_blue.png", use_container_width=True)
+
+from data.data_loader import load_and_prepare, get_available_countries
 
 try:
-    engine = PredictionEngine()
+    df_full = load_and_prepare(country="ALL")
+    countries = get_available_countries(df_full)
+    if not countries: countries = ["India"]
+except Exception as e:
+    st.error(f"Initialization error: {e}")
+    st.stop()
+
+selected_country = st.selectbox("Select Country for Analysis", countries, index=countries.index("India") if "India" in countries else 0)
+
+@st.cache_resource(ttl=3600)
+def get_dynamic_engine(country):
+    df = load_and_prepare(country=country)
+    from models.predictor import PredictionEngine
+    return PredictionEngine(dynamic_df=df)
+
+try:
+    engine = get_dynamic_engine(selected_country)
     if not engine.registry:
-        st.error("No models found. Please train models first.")
+        st.error("No models found.")
         st.stop()
 except Exception as e:
     st.error(f"Initialization error: {e}")
@@ -42,8 +59,22 @@ col1, col2 = st.columns([2, 1])
 with col1:
     st.subheader(f"Feature Importance ({selected_model})")
     
-    with st.spinner("Calculating SHAP values..."):
-        importance_data = get_feature_importance(selected_model)
+    with st.spinner("Extracting feature importance..."):
+        model = engine.models[selected_model]
+        features = engine.registry[selected_model]["features"]
+        importances = None
+        
+        if hasattr(model, "feature_importances_"):
+            importances = np.array(model.feature_importances_)
+        elif hasattr(model, "coef_"):
+            importances = np.abs(np.array(model.coef_).ravel())
+            
+        importance_data = []
+        if importances is not None:
+            total = importances.sum()
+            if total > 0: importances = importances / total
+            for f, imp in zip(features, importances):
+                importance_data.append({"feature": f, "importance": float(imp)})
         
     if importance_data:
         df_imp = pd.DataFrame(importance_data)
