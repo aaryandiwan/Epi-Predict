@@ -32,7 +32,7 @@ def run_pipeline(force_refresh=False, skip_lstm=False, skip_arima=False, country
         
     # 2. Feature Engineering
     logger.info("\n--- Phase 2: Feature Engineering ---")
-    df_features = run_feature_pipeline(df)
+    df_features = run_feature_pipeline(df, group_col="COUNTRY_AREA_TERRITORY")
     
     # Prepare ML inputs
     X_train, X_test, y_train, y_test, features = prepare_ml_data(df_features)
@@ -67,15 +67,21 @@ def run_pipeline(force_refresh=False, skip_lstm=False, skip_arima=False, country
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train Epi Predict ML Models")
     parser.add_argument("--country", type=str, default="India", help="Country to train on (default: India)")
+    parser.add_argument("--all-countries", action="store_true", help="Train Universal Panel Model on all countries")
     parser.add_argument("--force-refresh", action="store_true", help="Force refresh data from WHO API")
     parser.add_argument("--skip-lstm", action="store_true", help="Skip LSTM model training (useful if TF not installed)")
     parser.add_argument("--skip-arima", action="store_true", help="Skip ARIMA model training")
     
     args = parser.parse_args()
     
+    target_country = "ALL" if args.all_countries else args.country
+    
+    # ARIMA is mathematically invalid for stacked panel data, so we must skip it
+    should_skip_arima = args.skip_arima or args.all_countries
+    
     run_pipeline(
         force_refresh=args.force_refresh,
         skip_lstm=args.skip_lstm,
-        skip_arima=args.skip_arima,
-        country=args.country
+        skip_arima=should_skip_arima,
+        country=target_country
     )

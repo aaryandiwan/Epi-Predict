@@ -39,11 +39,11 @@ DEFAULT_WHO_REGION = os.getenv("DEFAULT_WHO_REGION", "SEAR")  # South-East Asia
 
 # ─── Model Configuration ────────────────────────────────────────────────────
 TARGET_COLUMN = "Target"  # INF_A + INF_B
-FEATURE_COLUMNS = ["ISO_YEAR", "ISO_WEEK", "Month", "lag_1", "lag_2", "roll_3"]
+FEATURE_COLUMNS = ["ISO_YEAR", "ISO_WEEK", "Month", "lag_1", "lag_2", "roll_3", "country_code"]
 ALL_FEATURES = [
     "ISO_YEAR", "ISO_WEEK", "Month",
     "lag_1", "lag_2", "lag_3",
-    "roll_3", "roll_5", "positivity_rate"
+    "roll_3", "roll_5", "positivity_rate", "country_code"
 ]
 TRAIN_TEST_SPLIT = 0.8
 RANDOM_STATE = 42
@@ -54,20 +54,20 @@ FORECAST_WEEKS = int(os.getenv("FORECAST_WEEKS", "12"))
 MODEL_PARAMS = {
     "linear_regression": {},
     "random_forest": {
-        "n_estimators": 200,
+        "n_estimators": 50,
         "max_depth": 10,
         "random_state": RANDOM_STATE,
     },
     "tuned_random_forest": {
         "param_distributions": {
-            "n_estimators": [100, 200, 300],
-            "max_depth": [5, 8, 12, None],
-            "min_samples_split": [2, 5, 10],
-            "min_samples_leaf": [1, 2, 4],
-            "max_features": ["sqrt", "log2", 0.8],
+            "n_estimators": [50, 100],
+            "max_depth": [5, 8, 10],
+            "min_samples_split": [5, 10],
+            "min_samples_leaf": [2, 4],
+            "max_features": ["sqrt", 0.8],
         },
-        "n_iter": 30,
-        "cv_splits": 5,
+        "n_iter": 10,
+        "cv_splits": 3,
         "scoring": "neg_mean_absolute_error",
     },
     "xgboost": {

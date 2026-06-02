@@ -22,7 +22,7 @@ if not exist "models\saved_models\metadata.json" (
     echo.
     echo [3/4] Models are not trained yet. Starting initial training...
     echo This will download WHO data and train all AI models. Please wait...
-    python scripts\train_models.py --country India
+    python scripts\train_models.py --country India --skip-lstm
 ) else (
     echo [3/4] Models are already trained.
 )

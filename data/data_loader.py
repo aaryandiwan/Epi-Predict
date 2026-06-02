@@ -138,7 +138,11 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 def filter_by_country(
     df: pd.DataFrame, country: str = None
 ) -> pd.DataFrame:
-    """Filter data for a specific country."""
+    """Filter data for a specific country. Use 'ALL' for global panel data."""
+    if country == "ALL":
+        logger.info("Returning data for ALL countries (Global Panel Mode)")
+        return df
+
     country = country or DEFAULT_COUNTRY
     col = "COUNTRY_AREA_TERRITORY"
     if col not in df.columns:
@@ -243,7 +247,7 @@ def load_and_prepare(
             logger.info("Loading processed data from cache")
             df = pd.read_csv(PROCESSED_DATA_FILE, low_memory=False)
             # Re-apply country filter
-            if not use_global and country:
+            if not use_global:
                 df = filter_by_country(df, country)
             return df
 

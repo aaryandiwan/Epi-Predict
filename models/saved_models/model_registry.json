@@ -5,7 +5,7 @@
       "mae": 0.0,
       "rmse": 0.0,
       "r2_score": 1.0,
-      "train_time_seconds": 0.01
+      "train_time_seconds": 0.03
     },
     "features": [
       "ISO_YEAR",
@@ -13,18 +13,19 @@
       "Month",
       "lag_1",
       "lag_2",
-      "roll_3"
+      "roll_3",
+      "country_code"
     ],
-    "timestamp": "20260602_171051",
-    "version": 1
+    "timestamp": "20260602_175614",
+    "version": 3
   },
   "random_forest": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\random_forest.joblib",
     "metrics": {
-      "mae": 7.3593,
-      "rmse": 12.9506,
-      "r2_score": 0.7335,
-      "train_time_seconds": 0.64
+      "mae": 64.368,
+      "rmse": 837.3288,
+      "r2_score": 0.547,
+      "train_time_seconds": 12.86
     },
     "features": [
       "ISO_YEAR",
@@ -32,18 +33,19 @@
       "Month",
       "lag_1",
       "lag_2",
-      "roll_3"
+      "roll_3",
+      "country_code"
     ],
-    "timestamp": "20260602_171052",
-    "version": 1
+    "timestamp": "20260602_175627",
+    "version": 3
   },
   "tuned_random_forest": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\tuned_random_forest.joblib",
     "metrics": {
-      "mae": 7.6493,
-      "rmse": 12.6331,
-      "r2_score": 0.7464,
-      "train_time_seconds": 21.45
+      "mae": 68.9776,
+      "rmse": 879.493,
+      "r2_score": 0.5003,
+      "train_time_seconds": 84.56
     },
     "features": [
       "ISO_YEAR",
@@ -51,18 +53,19 @@
       "Month",
       "lag_1",
       "lag_2",
-      "roll_3"
+      "roll_3",
+      "country_code"
     ],
-    "timestamp": "20260602_171113",
-    "version": 1
+    "timestamp": "20260602_175752",
+    "version": 3
   },
   "xgboost": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\xgboost.joblib",
     "metrics": {
-      "mae": 8.9333,
-      "rmse": 14.0445,
-      "r2_score": 0.6865,
-      "train_time_seconds": 2.17
+      "mae": 74.6453,
+      "rmse": 972.4584,
+      "r2_score": 0.389,
+      "train_time_seconds": 1.62
     },
     "features": [
       "ISO_YEAR",
@@ -70,25 +73,26 @@
       "Month",
       "lag_1",
       "lag_2",
-      "roll_3"
+      "roll_3",
+      "country_code"
     ],
-    "timestamp": "20260602_171115",
-    "version": 1
+    "timestamp": "20260602_175754",
+    "version": 3
   },
   "arima": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\arima.pkl",
     "metrics": {
-      "mae": 18.6246,
-      "rmse": 25.2949,
-      "r2_score": -0.0168,
-      "train_time_seconds": 2.41,
-      "aic": 12890.0
+      "mae": 143.7389,
+      "rmse": 1251.1397,
+      "r2_score": -0.0134,
+      "train_time_seconds": 12.37,
+      "aic": 1806300.0
     },
     "features": [
       "target_series"
     ],
-    "timestamp": "20260602_171120",
-    "version": 1
+    "timestamp": "20260602_175054",
+    "version": 2
   },
   "_best_model": "linear_regression",
   "_comparison": [
@@ -97,36 +101,28 @@
       "mae": 0.0,
       "rmse": 0.0,
       "r2_score": 1.0,
-      "train_time_seconds": 0.01
+      "train_time_seconds": 0.03
     },
     {
       "model": "random_forest",
-      "mae": 7.3593,
-      "rmse": 12.9506,
-      "r2_score": 0.7335,
-      "train_time_seconds": 0.64
+      "mae": 64.368,
+      "rmse": 837.3288,
+      "r2_score": 0.547,
+      "train_time_seconds": 12.86
     },
     {
       "model": "tuned_random_forest",
-      "mae": 7.6493,
-      "rmse": 12.6331,
-      "r2_score": 0.7464,
-      "train_time_seconds": 21.45
+      "mae": 68.9776,
+      "rmse": 879.493,
+      "r2_score": 0.5003,
+      "train_time_seconds": 84.56
     },
     {
       "model": "xgboost",
-      "mae": 8.9333,
-      "rmse": 14.0445,
-      "r2_score": 0.6865,
-      "train_time_seconds": 2.17
-    },
-    {
-      "model": "arima",
-      "mae": 18.6246,
-      "rmse": 25.2949,
-      "r2_score": -0.0168,
-      "train_time_seconds": 2.41,
-      "aic": 12890.0
+      "mae": 74.6453,
+      "rmse": 972.4584,
+      "r2_score": 0.389,
+      "train_time_seconds": 1.62
     }
   ]
 }
