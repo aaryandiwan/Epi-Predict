@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: epi-predict-app
+    ports:
+      - "8000:8000" # FastAPI
+      - "8501:8501" # Streamlit
+    env_file:
+      - .env
+    volumes:
+      - models_data:/app/models/saved_models
+      - data_cache:/app/data/processed
+      - logs_data:/app/logs
+    restart: unless-stopped
+
+volumes:
+  models_data:
+  data_cache:
+  logs_data:
