@@ -13,7 +13,7 @@ A production-grade, end-to-end AI healthcare application designed to forecast se
 
 ## 🌐 Live Demo
 The application can be deployed for free using Streamlit Community Cloud.
-Once deployed, the live link will be available here: **[Link to Live App]**
+Once deployed, the live link will be available here: **[[Link Live App to](https://epi-predict-m4lwjctpndijkpvuq3q7wy.streamlit.app/)]**
 
 ## 🚀 Quick Start
 
