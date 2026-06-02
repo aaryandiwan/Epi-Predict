@@ -108,6 +108,13 @@ DYNAMIC_RISK_PERCENTILES = {
     # severe is > 90th percentile
 }
 
+RISK_THRESHOLDS = {
+    "low": {"label": "Low Risk", "color": "#22c55e", "icon": "✅"},
+    "moderate": {"label": "Moderate Risk", "color": "#f59e0b", "icon": "⚠️"},
+    "high": {"label": "High Risk", "color": "#ef4444", "icon": "🔴"},
+    "severe": {"label": "Severe Outbreak", "color": "#7c2d12", "icon": "🚨"},
+}
+
 
 # ─── API Configuration ──────────────────────────────────────────────────────
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
