@@ -81,7 +81,11 @@ def _load_model(model_name: str):
             f"Model '{model_name}' not in registry. Available: {available}"
         )
 
-    model_path = Path(registry[model_name]["path"])
+    # Construct path dynamically using MODELS_DIR to prevent absolute path issues on cloud
+    saved_path_str = registry[model_name]["path"]
+    filename = Path(saved_path_str.replace("\\", "/")).name
+    model_path = MODELS_DIR / filename
+    
     if not model_path.exists():
         raise FileNotFoundError(
             f"Model file not found: {model_path}"
