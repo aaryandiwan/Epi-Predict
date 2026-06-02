@@ -27,7 +27,7 @@ try:
         st.error("No models found. Please train models first.")
         st.stop()
         
-    df_full = load_and_prepare(country=None)
+    df_full = load_and_prepare(country="ALL")
     countries = get_available_countries(df_full)
     if not countries: countries = ["India"]
 except Exception as e:

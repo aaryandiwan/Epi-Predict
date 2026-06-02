@@ -37,16 +37,25 @@ st.sidebar.markdown(f"""
 st.sidebar.markdown("---")
 
 # Landing Page Content
-st.markdown(f"""
-<div class="hero-section">
-    <div style="font-size: 4rem; margin-bottom: 1rem;">🦠</div>
-    <h1 class="hero-title">{DASHBOARD_TITLE}</h1>
-    <p class="hero-subtitle">
-        An advanced AI-powered healthcare application designed to forecast seasonal influenza outbreaks globally using WHO surveillance data. 
-        Transforming raw data into actionable intelligence.
-    </p>
-</div>
+col_hero1, col_hero2 = st.columns([3, 2])
 
+with col_hero1:
+    st.markdown(f"""
+    <div class="hero-section" style="height: 100%;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🦠</div>
+        <h1 class="hero-title">{DASHBOARD_TITLE}</h1>
+        <p class="hero-subtitle">
+            An advanced AI-powered healthcare application designed to forecast seasonal influenza outbreaks globally using WHO surveillance data. 
+            Transforming raw data into actionable intelligence.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col_hero2:
+    st.image("dashboard/assets/flu_virus.png", use_container_width=True)
+
+
+st.markdown("""
 <div class="feature-grid">
     <div class="feature-card">
         <div class="feature-icon">🧠</div>

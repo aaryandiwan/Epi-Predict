@@ -120,12 +120,14 @@ def create_rolling_features(
         col_name = f"roll_{w}"
         if group_col and group_col in df.columns:
             df[col_name] = df.groupby(group_col)[TARGET_COLUMN].transform(
-                lambda x: x.rolling(window=w, min_periods=1).mean()
+                lambda x: x.shift(1).rolling(window=w, min_periods=1).mean()
             )
         else:
             df[col_name] = (
-                df[TARGET_COLUMN].rolling(window=w, min_periods=1).mean()
+                df[TARGET_COLUMN].shift(1).rolling(window=w, min_periods=1).mean()
             )
+        # Fill NA that resulted from shift
+        df[col_name] = df[col_name].fillna(0)
 
     logger.info(f"Created rolling features: {[f'roll_{w}' for w in windows]}")
     return df

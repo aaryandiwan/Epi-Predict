@@ -43,10 +43,11 @@ selected_model_display = st.sidebar.selectbox("Select Model", model_options)
 selected_model = None if selected_model_display == "Auto (Best Model)" else selected_model_display
 
 try:
-    df_full = load_and_prepare(country=None)
+    df_full = load_and_prepare(country="ALL")
     countries = get_available_countries(df_full)
     if not countries: countries = ["India"]
-except:
+except Exception as e:
+    st.sidebar.error(f"Error loading countries: {e}")
     countries = ["India"]
 selected_country = st.sidebar.selectbox("Select Country", countries, index=countries.index("India") if "India" in countries else 0)
 

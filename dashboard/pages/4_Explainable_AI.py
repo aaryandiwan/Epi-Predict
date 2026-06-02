@@ -20,6 +20,7 @@ if css_path.exists():
 
 st.title("Explainable AI (XAI)")
 st.markdown("Understand how the machine learning models make their influenza predictions.")
+st.image("dashboard/assets/influenza_blue.png", use_container_width=True)
 
 try:
     engine = PredictionEngine()

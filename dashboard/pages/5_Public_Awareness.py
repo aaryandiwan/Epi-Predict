@@ -21,6 +21,7 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.subheader("About Influenza")
+    st.image("dashboard/assets/virus_red.png", use_container_width=True)
     flu_info = get_flu_info()
     
     st.markdown(f"""
@@ -31,6 +32,7 @@ with col1:
     """, unsafe_allow_html=True)
     
     st.subheader("Common Symptoms")
+    st.image("dashboard/assets/flu_man.png", use_container_width=True)
     symptoms_html = "<div class='epi-card'><ul style='color: #cbd5e1;'>"
     for sym in flu_info["symptoms"]:
         symptoms_html += f"<li style='margin-bottom: 0.5rem;'>{sym}</li>"
@@ -46,6 +48,7 @@ with col2:
     st.markdown(hr_html, unsafe_allow_html=True)
     
     st.subheader("Vaccination Guidance")
+    st.image("dashboard/assets/vaccine_icon.png", use_container_width=True)
     vax_info = get_vaccination_guidance()
     st.markdown(f"""
     <div class="epi-card" style="border-left: 4px solid #00d4aa;">

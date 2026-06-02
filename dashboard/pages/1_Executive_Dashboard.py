@@ -25,6 +25,7 @@ if css_path.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 st.title("Executive Dashboard")
+st.image("dashboard/assets/global_map.png", use_container_width=True)
 
 # Data Loading with Cache
 @st.cache_data(ttl=300)
@@ -45,10 +46,11 @@ def get_dashboard_data(country):
 st.sidebar.header("Global Filters")
 # Try to get countries, default to India if fails
 try:
-    df_full = load_and_prepare(country=None) # Load full to get countries
+    df_full = load_and_prepare(country="ALL") # Load full to get countries
     countries = get_available_countries(df_full)
     if not countries: countries = ["India"]
-except:
+except Exception as e:
+    st.sidebar.error(f"Error loading countries: {e}")
     countries = ["India"]
 
 selected_country = st.sidebar.selectbox("Select Country", countries, index=countries.index("India") if "India" in countries else 0)

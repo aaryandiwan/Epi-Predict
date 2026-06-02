@@ -2,10 +2,10 @@
   "linear_regression": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\linear_regression.joblib",
     "metrics": {
-      "mae": 0.0,
-      "rmse": 0.0,
-      "r2_score": 1.0,
-      "train_time_seconds": 0.03
+      "mae": 45.7447,
+      "rmse": 367.5828,
+      "r2_score": 0.9127,
+      "train_time_seconds": 0.12
     },
     "features": [
       "ISO_YEAR",
@@ -16,16 +16,16 @@
       "roll_3",
       "country_code"
     ],
-    "timestamp": "20260602_175614",
-    "version": 3
+    "timestamp": "20260602_183435",
+    "version": 6
   },
   "random_forest": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\random_forest.joblib",
     "metrics": {
-      "mae": 64.368,
-      "rmse": 837.3288,
-      "r2_score": 0.547,
-      "train_time_seconds": 12.86
+      "mae": 107.2403,
+      "rmse": 1089.2211,
+      "r2_score": 0.2335,
+      "train_time_seconds": 23.38
     },
     "features": [
       "ISO_YEAR",
@@ -36,16 +36,16 @@
       "roll_3",
       "country_code"
     ],
-    "timestamp": "20260602_175627",
-    "version": 3
+    "timestamp": "20260602_183459",
+    "version": 6
   },
   "tuned_random_forest": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\tuned_random_forest.joblib",
     "metrics": {
-      "mae": 68.9776,
-      "rmse": 879.493,
-      "r2_score": 0.5003,
-      "train_time_seconds": 84.56
+      "mae": 105.1923,
+      "rmse": 1074.8109,
+      "r2_score": 0.2536,
+      "train_time_seconds": 110.54
     },
     "features": [
       "ISO_YEAR",
@@ -56,8 +56,8 @@
       "roll_3",
       "country_code"
     ],
-    "timestamp": "20260602_175752",
-    "version": 3
+    "timestamp": "20260602_183650",
+    "version": 6
   },
   "xgboost": {
     "path": "C:\\Users\\veera\\Desktop\\Influenza Project\\models\\saved_models\\xgboost.joblib",
@@ -98,31 +98,24 @@
   "_comparison": [
     {
       "model": "linear_regression",
-      "mae": 0.0,
-      "rmse": 0.0,
-      "r2_score": 1.0,
-      "train_time_seconds": 0.03
+      "mae": 45.7447,
+      "rmse": 367.5828,
+      "r2_score": 0.9127,
+      "train_time_seconds": 0.12
     },
     {
       "model": "random_forest",
-      "mae": 64.368,
-      "rmse": 837.3288,
-      "r2_score": 0.547,
-      "train_time_seconds": 12.86
+      "mae": 107.2403,
+      "rmse": 1089.2211,
+      "r2_score": 0.2335,
+      "train_time_seconds": 23.38
     },
     {
       "model": "tuned_random_forest",
-      "mae": 68.9776,
-      "rmse": 879.493,
-      "r2_score": 0.5003,
-      "train_time_seconds": 84.56
-    },
-    {
-      "model": "xgboost",
-      "mae": 74.6453,
-      "rmse": 972.4584,
-      "r2_score": 0.389,
-      "train_time_seconds": 1.62
+      "mae": 105.1923,
+      "rmse": 1074.8109,
+      "r2_score": 0.2536,
+      "train_time_seconds": 110.54
     }
   ]
 }
