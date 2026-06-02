@@ -33,8 +33,6 @@ ENV/
 
 # Project Specific
 data/processed/*.csv
-models/saved_models/*.pkl
-models/saved_models/*.keras
 logs/*.json
 logs/*.log
 
