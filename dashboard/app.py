@@ -37,20 +37,43 @@ st.sidebar.markdown(f"""
 st.sidebar.markdown("---")
 
 # Landing Page Content
-st.title(f"{DASHBOARD_TITLE}")
-st.markdown("""
-Welcome to **Epi Predict**, an advanced AI-powered healthcare application designed to forecast seasonal influenza outbreaks globally using WHO surveillance data.
+st.markdown(f"""
+<div class="hero-section">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">🦠</div>
+    <h1 class="hero-title">{DASHBOARD_TITLE}</h1>
+    <p class="hero-subtitle">
+        An advanced AI-powered healthcare application designed to forecast seasonal influenza outbreaks globally using WHO surveillance data. 
+        Transforming raw data into actionable intelligence.
+    </p>
+</div>
 
-### Features
-* **AI Prediction Engine:** Powered by 7 machine learning models including XGBoost, LSTM, and Stacking Ensembles.
-* **Early Warning System:** Classifies outbreak risk and provides actionable recommendations.
-* **Explainable AI:** Understand model decisions with SHAP feature importance analysis.
-* **Global Monitoring:** Interactive visualizations of historical trends and future forecasts.
+<div class="feature-grid">
+    <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-title">AI Prediction Engine</div>
+        <div class="feature-desc">Powered by 7 machine learning models including XGBoost, Random Forest, and Stacking Ensembles for maximum accuracy.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🚨</div>
+        <div class="feature-title">Early Warning System</div>
+        <div class="feature-desc">Dynamically classifies outbreak risk levels and provides actionable medical recommendations based on severity.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Explainable AI (XAI)</div>
+        <div class="feature-desc">Peer into the "black box" using SHAP to understand exactly which features drive the model's forecasts.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">Global Monitoring</div>
+        <div class="feature-desc">Interactive Plotly visualizations of historical trends, regional comparisons, and future outbreak forecasts.</div>
+    </div>
+</div>
 
-👈 **Please select a page from the sidebar to begin.**
-""")
-
-st.markdown("---")
+<div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem; color: #00d4aa; font-weight: 600;">
+    👈 Please select a module from the sidebar to begin exploring.
+</div>
+""", unsafe_allow_html=True)
 
 # Quick Stats / Status
 col1, col2, col3 = st.columns(3)
